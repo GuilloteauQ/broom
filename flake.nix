@@ -3,7 +3,7 @@
 
   outputs = { self, nixpkgs }: {
 
-    defaultPackage.x86_64-linux = self.packages.x86_64-linux.oar-of-tasks;
+    defaultPackage.x86_64-linux = self.packages.x86_64-linux.broom;
 
     packages.x86_64-linux.broom =
     with import nixpkgs { system = "x86_64-linux";};
