@@ -1,0 +1,3 @@
+[console_scripts]
+broom = app.broom:main
+
