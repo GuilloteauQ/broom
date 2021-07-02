@@ -1,9 +1,0 @@
-README.md
-setup.py
-app/broom.py
-broom.egg-info/PKG-INFO
-broom.egg-info/SOURCES.txt
-broom.egg-info/dependency_links.txt
-broom.egg-info/entry_points.txt
-broom.egg-info/requires.txt
-broom.egg-info/top_level.txt
