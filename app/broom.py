@@ -1,9 +1,12 @@
+"""
+Broom: a simple, local parameter sweep runner
+"""
 import subprocess
 from collections import deque
-import yaml
-import time
 import logging
 import sys
+import time
+import yaml
 
 
 class Expe:
@@ -25,7 +28,9 @@ class Expe:
         Start the next expe
         """
         param = self.params.popleft()
-        proc = subprocess.Popen(["sh", self.script_path, str(param)], stdout = subprocess.DEVNULL)
+        proc = subprocess.Popen(["sh", self.script_path, str(param)],
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
         self.running_expes[param] = proc
         self.logger.info("Starting expe: '%s %s'", self.script_path, param)
 
@@ -51,7 +56,6 @@ class Expe:
         """
         Run the expe
         """
-
         while len(self.params) > 0:
             self.logger.info("Still %s expe remaining", len(self.params))
             terminated_expes = self.get_terminated_expes()
@@ -68,23 +72,17 @@ class Expe:
                                      self.script_path,
                                      param,
                                      code)
-            nb_free_spots = min(self.max_concurrent_expe - len(self.running_expes), len(self.params))
+            nb_free_spots = min(self.max_concurrent_expe - len(self.running_expes),
+                                len(self.params))
             for _ in range(nb_free_spots):
                 self.start_next_expe()
 
             time.sleep(self.sleep_time)
 
-def main():
-    """
-    main function
-    """
-    args = sys.argv
-    filename = args[1]
-    with open(filename, 'r') as config_file:
-        config = yaml.load(config_file)
-        print(config)
-        expe = Expe(config)
-        expe.run()
-
 if __name__ == "__main__":
-    main()
+    ARGS = sys.argv
+    FILENAME = ARGS[1]
+    with open(FILENAME, 'r') as config_file:
+        CONFIG = yaml.load(config_file)
+        EXPE = Expe(CONFIG)
+        EXPE.run()
