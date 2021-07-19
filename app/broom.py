@@ -3,20 +3,27 @@ Broom: a simple, local parameter sweep runner
 """
 import subprocess
 from collections import deque
+import csv
 import logging
 import sys
 import time
 import yaml
-
 
 class Expe:
     """
     Class repesenting an Expe
     """
     def __init__(self, config):
-        # self.params = deque(config["params"])
-        self.params = dict(enumerate(config["params"]))
-        self.remaining_expes = deque(range(len(config["params"])))
+        if "params" in config:
+            self.params = dict(enumerate(config["params"]))
+        elif "params_file" in config:
+            csv_filename = config["params_file"]
+            with open(csv_filename) as csv_file:
+                spamreader = csv.reader(csv_file, delimiter=',')
+                self.params = dict(enumerate(spamreader))
+        else:
+            sys.exit(1)
+        self.remaining_expes = deque(range(len(self.params)))
         self.running_expes = {}
         self.max_concurrent_expe = config["max_concurrent_expe"]
         self.script_path = config["script_path"]
@@ -61,7 +68,7 @@ class Expe:
         """
         Run the expe
         """
-        while len(self.remaining_expes) > 0:
+        while len(self.remaining_expes) > 0 or len(self.running_expes) > 0:
             self.logger.info("Still %s expe remaining (%f %%)",
                              len(self.remaining_expes),
                              int(100 * (1.0 - len(self.remaining_expes) / len(self.params))))
